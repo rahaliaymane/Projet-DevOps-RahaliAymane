@@ -21,3 +21,31 @@ pipeline {
         }
     }
 }
+post {
+    success {
+        script {
+            try {
+                slackSend(
+                    channel: '#jenkins',
+                    credentialId: 'slack-webhook',
+                    message: "✅ Build SUCCESS : ${env.JOB_NAME} #${env.BUILD_NUMBER}"
+                )
+            } catch (e) {
+                echo "Slack notification skipped (configuration issue)"
+            }
+        }
+    }
+    failure {
+        script {
+            try {
+                slackSend(
+                    channel: '#jenkins',
+                    credentialId: 'slack-webhook',
+                    message: "❌ Build FAILED : ${env.JOB_NAME} #${env.BUILD_NUMBER}"
+                )
+            } catch (e) {
+                echo "Slack notification skipped (configuration issue)"
+            }
+        }
+    }
+}
